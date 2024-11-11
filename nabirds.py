@@ -25,20 +25,22 @@ def load_bounding_box_annotations(dataset_path=''):
 
     return bboxes
 
-
 def load_part_annotations(dataset_path=''):
     parts = {}
-
     with open(os.path.join(dataset_path, 'parts/part_locs.txt')) as f:
         for line in f:
-            pieces = line.strip().split()
-            image_id = pieces[0]
+            try:
+                image_id, part_id, x, y, visible = line.strip().split()
+            except ValueError:
+                # Handle lines with missing values, if any
+                print(f"Skipping line: {line.strip()} - Missing values")
+                continue
+
             parts.setdefault(image_id, [0] * 11)
-            part_id = int(pieces[1])
-            parts[image_id][part_id] = map(int, pieces[2:])
+            part_id = int(part_id)
+            parts[image_id][part_id] = list(map(int, [x, y, visible]))
 
     return parts
-
 
 def load_part_names(dataset_path=''):
     names = {}
@@ -51,7 +53,6 @@ def load_part_names(dataset_path=''):
 
     return names
 
-
 def load_class_names(dataset_path=''):
     names = {}
 
@@ -62,7 +63,6 @@ def load_class_names(dataset_path=''):
             names[class_id] = ' '.join(pieces[1:])
 
     return names
-
 
 def load_image_labels(dataset_path=''):
     labels = {}
@@ -76,7 +76,6 @@ def load_image_labels(dataset_path=''):
 
     return labels
 
-
 def load_image_paths(dataset_path='', path_prefix=''):
     paths = {}
 
@@ -88,7 +87,6 @@ def load_image_paths(dataset_path='', path_prefix=''):
             paths[image_id] = path
 
     return paths
-
 
 def load_image_sizes(dataset_path=''):
     sizes = {}
@@ -102,7 +100,6 @@ def load_image_sizes(dataset_path=''):
 
     return sizes
 
-
 def load_hierarchy(dataset_path=''):
     parents = {}
 
@@ -114,7 +111,6 @@ def load_hierarchy(dataset_path=''):
 
     return parents
 
-
 def load_photographers(dataset_path=''):
     photographers = {}
     with open(os.path.join(dataset_path, 'photographers.txt')) as f:
@@ -124,7 +120,6 @@ def load_photographers(dataset_path=''):
             photographers[image_id] = ' '.join(pieces[1:])
 
     return photographers
-
 
 def load_train_test_split(dataset_path=''):
     train_images = []
@@ -141,7 +136,6 @@ def load_train_test_split(dataset_path=''):
                 test_images.append(image_id)
 
     return train_images, test_images
-
 
 if __name__ == '__main__':
 
@@ -169,7 +163,7 @@ if __name__ == '__main__':
 
     # Load in the part data
     part_names = load_part_names(dataset_path)
-    part_ids = part_names.keys()
+    part_ids = list(part_names.keys())
     part_ids.sort()
 
     # Load in the photographers
@@ -180,7 +174,8 @@ if __name__ == '__main__':
 
     # Visualize the images and their annotations
     image_identifiers = image_paths.keys()
-    random.shuffle(image_identifiers)
+    random.shuffle(list(image_identifiers))
+
     for image_id in image_identifiers:
 
         image_path = image_paths[image_id]
@@ -277,18 +272,12 @@ if __name__ == '__main__':
         plt.show(block=False)
 
         # Print some info about the image and the annotations:
-        print
-        "Image ID: %s" % (image_id,)
-        print
-        "Image Path: %s" % (image_path,)
-        print
-        "Image Dimensions: %d x %d" % (image_sizes[image_id][0], image_sizes[image_id][1])
-        print
-        "Photographer: %s" % (photographers[image_id],)
-        print
-        "Split: %s" % ("train" if image_id in train_images else "test")
-        print
-        "Class Label Path:"
+        print("Image ID: %s" % (image_id,))
+        print("Image Path: %s" % (image_path,))
+        print("Image Dimensions: %d x %d" % (image_sizes[image_id][0], image_sizes[image_id][1]))
+        print("Photographer: %s" % (photographers[image_id],))
+        print("Split: %s" % ("train" if image_id in train_images else "test"))
+        print("Class Label Path:")
 
         label_path = []
         current_class_label = class_label
@@ -299,20 +288,17 @@ if __name__ == '__main__':
         label_path.reverse()
         for depth, (class_name, class_id) in enumerate(label_path):
             line = "\t" * (depth + 1)
-            print
-            line + "|- %s \t[ID: %s]" % (class_name, class_id)
+            print(line + "|- %s \t[ID: %s]" % (class_name, class_id))
 
-        print
-        "Bounding Box Dimensions: %d x %d" % (bbox_width, bbox_height)
-        print
-        "%-10s\t%-1s" % ('Part Name', 'Visibility')
-        for part_id in part_ids:
+        print("Bounding Box Dimensions: %d x %d" % (bbox_width, bbox_height))
+        print("%-10s\t%-1s" % ('Part Name', 'Visibility'))
+
+        for i, part_id in enumerate(part_ids):
             x, y, v = parts[part_id]
-            print
-            "%-10s\t%-1s" % (part_names[part_id], 'Y' if v else 'N')
+            print("%d %-10s\t%-1s" % (i, part_names[part_id], 'Y' if v else 'N'))
 
         # Keep showing images until a button other than Enter is pressed
-        ri = raw_input("Press Enter to continue. Or press any key and then enter to quit...")
+        ri = input("Press Enter to continue. Or press any key and then enter to quit...")
         if ri != '':
             break
         print

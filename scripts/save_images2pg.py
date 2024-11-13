@@ -31,14 +31,11 @@ with open('../images.txt', 'r') as f:
         # get the path of the image
         path_image = linea.strip().split(' ')[1]
         # concatenate the path of the image
-        path_image = f"images/{path_image}"
+        path_image = f"../images/{path_image}"
 
         # read the image file in binary mode
         with open(path_image, 'rb') as imagen_file:
             binary_image = imagen_file.read()
-
-        # print the image_id, path_image and the binary image
-        print("image_id: ", image_id, "path_image: ", path_image, "exist_image: ", exists(path_image))
 
         cur.execute("SELECT EXISTS (SELECT 1 FROM image_files WHERE image_id = %s)", (image_id,))
         if cur.fetchone()[0]:

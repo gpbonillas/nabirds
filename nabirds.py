@@ -14,6 +14,15 @@ except:
 
 
 def load_bounding_box_annotations(dataset_path=''):
+    """
+    Loads the bounding box annotations from the dataset.
+
+    Args:
+        dataset_path: The path to the dataset.
+
+    Returns:
+        A dictionary mapping image IDs to bounding boxes.
+    """
     bboxes = {}
 
     with open(os.path.join(dataset_path, 'bounding_boxes.txt')) as f:
@@ -26,6 +35,15 @@ def load_bounding_box_annotations(dataset_path=''):
     return bboxes
 
 def load_part_annotations(dataset_path=''):
+    """
+    Loads the part annotations from the dataset.
+
+    Args:
+        dataset_path: The path to the dataset.
+
+    Returns:
+        A dictionary mapping image IDs to part annotations.
+    """
     parts = {}
     with open(os.path.join(dataset_path, 'parts/part_locs.txt')) as f:
         for line in f:
@@ -43,6 +61,15 @@ def load_part_annotations(dataset_path=''):
     return parts
 
 def load_part_names(dataset_path=''):
+    """
+    Loads the part names from the dataset.
+
+    Args:
+        dataset_path: The path to the dataset.
+
+    Returns:
+        A dictionary mapping part IDs to part names.
+    """
     names = {}
 
     with open(os.path.join(dataset_path, 'parts/parts.txt')) as f:
@@ -54,6 +81,15 @@ def load_part_names(dataset_path=''):
     return names
 
 def load_class_names(dataset_path=''):
+    """
+    Loads the class names from the dataset.
+
+    Args:
+        dataset_path: The path to the dataset.
+
+    Returns:
+        A dictionary mapping class IDs to class names.
+    """
     names = {}
 
     with open(os.path.join(dataset_path, 'classes.txt')) as f:
@@ -65,6 +101,15 @@ def load_class_names(dataset_path=''):
     return names
 
 def load_image_labels(dataset_path=''):
+    """
+    Loads the image labels from the dataset.
+
+    Args:
+        dataset_path: The path to the dataset.
+
+    Returns:
+        A dictionary mapping image IDs to class IDs.
+    """
     labels = {}
 
     with open(os.path.join(dataset_path, 'image_class_labels.txt')) as f:
@@ -77,6 +122,16 @@ def load_image_labels(dataset_path=''):
     return labels
 
 def load_image_paths(dataset_path='', path_prefix=''):
+    """
+    Loads the image paths from the dataset.
+
+    Args:
+        dataset_path: The path to the dataset.
+        path_prefix: The prefix to add to the image paths.
+
+    Returns:
+        A dictionary mapping image IDs to image paths.
+    """
     paths = {}
 
     with open(os.path.join(dataset_path, 'images.txt')) as f:
@@ -89,6 +144,15 @@ def load_image_paths(dataset_path='', path_prefix=''):
     return paths
 
 def load_image_sizes(dataset_path=''):
+    """
+    Loads the image sizes from the dataset.
+
+    Args:
+        dataset_path: The path to the dataset.
+
+    Returns:
+        A dictionary mapping image IDs to image sizes.
+    """
     sizes = {}
 
     with open(os.path.join(dataset_path, 'sizes.txt')) as f:
@@ -101,6 +165,15 @@ def load_image_sizes(dataset_path=''):
     return sizes
 
 def load_hierarchy(dataset_path=''):
+    """
+    Loads the class hierarchy from the dataset.
+
+    Args:
+        dataset_path: The path to the dataset.
+
+    Returns:
+        A dictionary mapping child class IDs to parent class IDs.
+    """
     parents = {}
 
     with open(os.path.join(dataset_path, 'hierarchy.txt')) as f:
@@ -112,6 +185,15 @@ def load_hierarchy(dataset_path=''):
     return parents
 
 def load_photographers(dataset_path=''):
+    """
+    Loads the photographers from the dataset.
+
+    Args:
+        dataset_path: The path to the dataset.
+
+    Returns:
+        A dictionary mapping image IDs to photographers.
+    """
     photographers = {}
     with open(os.path.join(dataset_path, 'photographers.txt')) as f:
         for line in f:
@@ -122,6 +204,15 @@ def load_photographers(dataset_path=''):
     return photographers
 
 def load_train_test_split(dataset_path=''):
+    """
+    Loads the train/test split from the dataset.
+
+    Args:
+        dataset_path: The path to the dataset.
+
+    Returns:
+        A tuple containing two lists: the training image IDs and the test image IDs.
+    """
     train_images = []
     test_images = []
 
@@ -199,7 +290,6 @@ if __name__ == '__main__':
         # Render the part annotations
         if has_networkx:
             # Use networkx spring layout
-
             G = nx.Graph()
             part_data = []
             initial_positions = {}
